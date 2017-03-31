@@ -132,7 +132,7 @@ fi
   cat "$pub" "$sig" "$zip"
 ) > "$crx"
 
-cp $crx $xpi
+cp $zip $xpi
 
 bash utils/android-push.sh "$xpi"
 
