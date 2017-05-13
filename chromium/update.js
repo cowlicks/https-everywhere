@@ -64,6 +64,7 @@ let xhr_promise = url => {
         resolve(this.response);
       }
     }
+    xhr.responseType = "text";
     xhr.send(null);
   });
 }
