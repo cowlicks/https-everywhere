@@ -54,15 +54,6 @@ function getRule(from, to) {
 }
 
 /**
- * Regex-Compile a pattern
- * @param pattern The pattern to compile
- * @constructor
- */
-function Exclusion(pattern) {
-  this.pattern_c = new RegExp(pattern);
-}
-
-/**
  * Generates a CookieRule
  * @param host The host regex to compile
  * @param cookiename The cookie name Regex to compile
@@ -110,13 +101,9 @@ RuleSet.prototype = {
   apply: function(urispec) {
     var returl = null;
     // If we're covered by an exclusion, go home
-    if (this.exclusions !== null) {
-      for (let exclusion of this.exclusions) {
-        if (exclusion.pattern_c.test(urispec)) {
-          util.log(util.DBUG, "excluded uri " + urispec);
-          return null;
-        }
-      }
+    if (this.exclusions !== null && this.exclusions.test(urispec)) {
+      util.log(util.DBUG, "excluded uri " + urispec);
+      return null;
     }
 
     // Okay, now find the first rule that triggers
@@ -144,15 +131,15 @@ RuleSet.prototype = {
     }
 
     try {
-      var this_exclusions_length = this.exclusions.length;
+      var this_exclusions_source = this.exclusions.source;
     } catch(e) {
-      var this_exclusions_length = 0;
+      var this_exclusions_source = null;
     }
 
     try {
-      var ruleset_exclusions_length = ruleset.exclusions.length;
+      var ruleset_exclusions_source = ruleset.exclusions.source;
     } catch(e) {
-      var ruleset_exclusions_length = 0;
+      var ruleset_exclusions_source = null;
     }
 
     try {
@@ -167,17 +154,14 @@ RuleSet.prototype = {
       var ruleset_rules_length = 0;
     }
 
-    if(this_exclusions_length != ruleset_exclusions_length ||
-       this_rules_length != ruleset_rules_length) {
+    if(this_rules_length != ruleset_rules_length) {
       return false;
     }
-    if(this_exclusions_length > 0) {
-      for(let x = 0; x < this.exclusions.length; x++){
-        if(this.exclusions[x].pattern_c != ruleset.exclusions[x].pattern_c) {
-          return false;
-        }
-      }
+
+    if (this_exclusions_source != ruleset_exclusions_source) {
+      return false;
     }
+
     if(this_rules_length > 0) {
       for(let x = 0; x < this.rules.length; x++){
         if(this.rules[x].to != ruleset.rules[x].to) {
@@ -185,6 +169,7 @@ RuleSet.prototype = {
         }
       }
     }
+
     return true;
   }
 
@@ -283,14 +268,7 @@ RuleSets.prototype = {
 
     var exclusions = ruletag["exclusion"];
     if (exclusions != null) {
-      for (let exclusion of exclusions) {
-        if (exclusion != null) {
-          if (!rule_set.exclusions) {
-            rule_set.exclusions = [];
-          }
-          rule_set.exclusions.push(new Exclusion(exclusion));
-        }
-      }
+      rule_set.exclusions = new RegExp(exclusions)
     }
 
     var cookierules = ruletag["securecookie"];
@@ -485,11 +463,11 @@ RuleSets.prototype = {
 
     var exclusions = ruletag.getElementsByTagName("exclusion");
     if (exclusions.length > 0) {
-      rule_set.exclusions = [];
-      for (let exclusion of exclusions) {
-        rule_set.exclusions.push(
-          new Exclusion(exclusion.getAttribute("pattern")));
-      }
+      rule_set.exclusions = new RegExp(
+        exclusions
+          .map(exclusion => exclusion.getAttribute("pattern"))
+          .join("|")
+      );
     }
 
     var cookierules = ruletag.getElementsByTagName("securecookie");
