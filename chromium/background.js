@@ -2,6 +2,10 @@
 
 (function(exports) {
 
+let rules = require('./rules'),
+  store = require('./store'),
+  util = require('./util');
+
 /**
  * Load a file packaged with the extension
  *
@@ -712,4 +716,4 @@ Object.assign(exports, {
   urlBlacklist,
 });
 
-})(typeof exports == 'undefined' ? window.background = {} : exports);
+})(typeof exports == 'undefined' ? require.scopes.background = {} : exports);

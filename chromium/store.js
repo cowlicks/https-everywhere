@@ -2,6 +2,8 @@
 
 (function(exports) {
 
+let background = require('./background');
+
 function setStorage(store) {
   Object.assign(exports, {
     get: store.get,
@@ -19,4 +21,4 @@ if (chrome.storage.sync) {
   });
 }
 
-})(typeof exports == 'undefined' ? window.store = {} : exports);
+})(typeof exports == 'undefined' ? require.scopes.store = {} : exports);

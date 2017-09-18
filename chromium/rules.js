@@ -3,6 +3,8 @@
 
 (function(exports) {
 
+let background = require('./background');
+
 // Stubs so this runs under nodejs. They get overwritten later by util.js
 if (typeof util == 'undefined' || typeof global != 'undefined') {
   Object.assign(global, {
@@ -586,4 +588,4 @@ Object.assign(exports, {
   RuleSets,
 });
 
-})(typeof exports == 'undefined' ? window.rules = {} : exports);
+})(typeof exports == 'undefined' ? require.scopes.rules = {} : exports);
