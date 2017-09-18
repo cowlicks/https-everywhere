@@ -3,7 +3,7 @@
 
 (function(exports) {
 
-let background = require('./background');
+let util = require('./util');
 
 // Stubs so this runs under nodejs. They get overwritten later by util.js
 if (typeof util == 'undefined' || typeof global != 'undefined') {
