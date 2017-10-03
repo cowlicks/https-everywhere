@@ -3,11 +3,19 @@
 (function(exports) {
 
 let background = require('./background');
+let ls;
+
+try{
+  ls = localStorage;
+} catch(e) {
+  ls = {setItem: () => {}, getItem: () => {}};
+}
 
 function setStorage(store) {
   Object.assign(exports, {
     get: store.get,
     set: store.set,
+    localStorage: ls
   });
 }
 
