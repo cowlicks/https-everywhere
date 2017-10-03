@@ -2,7 +2,6 @@
 
 (function(exports) {
 
-let background = require('./background');
 let ls;
 
 try {
