@@ -616,8 +616,7 @@ async function import_settings(settings) {
 
 Object.assign(exports, {
   all_rules,
-  urlBlacklist,
-  initialize,
+  urlBlacklist
 });
 
 })(typeof exports == 'undefined' ? require.scopes.background = {} : exports);
